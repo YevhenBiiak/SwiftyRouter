@@ -1,5 +1,5 @@
 //
-//  MessageManager.swift
+//  MailMessageHelper.swift
 //  SwiftyRouter
 //
 //  Created by Yevhen Biiak on 18.11.2024.
@@ -9,7 +9,7 @@ import UIKit
 import MessageUI
 
 
-final class MessageManager: NSObject, MFMessageComposeViewControllerDelegate, MFMailComposeViewControllerDelegate {
+final class MailMessageHelper: NSObject, MFMessageComposeViewControllerDelegate, MFMailComposeViewControllerDelegate {
     
     struct Mail {
         struct Attachment {
@@ -31,7 +31,7 @@ final class MessageManager: NSObject, MFMessageComposeViewControllerDelegate, MF
         var fileURL: URL? = nil
     }
     
-    static let shared = MessageManager()
+    static let shared = MailMessageHelper()
     override private init() {}
     
     private weak var viewController: UIViewController? {

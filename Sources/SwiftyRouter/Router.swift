@@ -181,32 +181,119 @@ extension Router {
 }
 
 
+// MARK: ColorPicker
+
+extension Router {
+    
+    public func colorPicker(_ title: String? = nil, completion: @escaping (UIColor) -> Void) {
+        ColorPickerHelper.pick(on: viewController, title: title, completion: completion)
+    }
+}
+
+
+// MARK: FilePicker
+
+extension Router {
+    /// File picker. ⚠️ **Warning**: Do not forget to handle with `startAccessingSecurityScopedResource`.
+    ///
+    /// - Parameters:
+    ///   - types: [UTType]
+    ///   - allowsMultipleSelection: Bool
+    ///   - title: String?
+    ///   - completion: (([URL]) -> Void)?
+    ///
+    /// # Example #
+    /// ```swift
+    /// if url.startAccessingSecurityScopedResource() {
+    ///     defer { url.stopAccessingSecurityScopedResource() }
+    ///
+    ///     do {
+    ///         let data = try Data(contentsOf: url)
+    ///         // Process data...
+    ///     } catch {
+    ///         print("Error accessing file: \(error)")
+    ///     }
+    /// } else {
+    ///     print("Failed to start accessing security scoped resource.")
+    /// }
+    /// ```
+    ///
+    /// Always call `stopAccessingSecurityScopedResource` to release the resource when done.
+    /// Failing to do so may lead to resource leaks or unexpected behavior.
+    public func filePicker(types: [UTType], allowsMultipleSelection: Bool = false, title: String? = nil, completion: (([URL]) -> Void)?) {
+        FilePickerHelper.pick(types: types, allowsMultipleSelection: allowsMultipleSelection, on: viewController, title: title, completion: completion)
+    }
+}
+
 // MARK: Mail / Message
 
 import MessageUI
 extension Router {
     
     public func sendMail(text: String, recipients: [String], subject: String, completion: ((MFMailComposeResult) -> Void)? = nil) {
-        let mail = MessageManager.Mail(body: text, isHTML: false, subject: subject, recipients: recipients, attachment: nil)
-        MessageManager.shared.sendMail(mail, completion: completion)
+        let mail = MailMessageHelper.Mail(body: text, isHTML: false, subject: subject, recipients: recipients, attachment: nil)
+        MailMessageHelper.shared.sendMail(mail, completion: completion)
     }
     
     public func sendMail(html: String, recipients: [String], subject: String, completion: ((MFMailComposeResult) -> Void)? = nil) {
-        let mail = MessageManager.Mail(body: html, isHTML: true, subject: subject, recipients: recipients, attachment: nil)
-        MessageManager.shared.sendMail(mail, completion: completion)
+        let mail = MailMessageHelper.Mail(body: html, isHTML: true, subject: subject, recipients: recipients, attachment: nil)
+        MailMessageHelper.shared.sendMail(mail, completion: completion)
     }
     
     public func sendMessage(text: String, recipients: [String], subject: String, completion: ((MessageComposeResult) -> Void)? = nil) {
-        let message = MessageManager.Message(body: text, recipients: recipients, fileURL: nil)
-        MessageManager.shared.sendMessage(message, completion: completion)
+        let message = MailMessageHelper.Message(body: text, recipients: recipients, fileURL: nil)
+        MailMessageHelper.shared.sendMessage(message, completion: completion)
     }
 }
 
 
 // MARK: Other
 
+import Photos
 import StoreKit
 extension Router {
+    
+    public func saveImage(_ image: UIImage, completion: ((Error?) -> Void)? = nil) {
+        PHPhotoLibrary.shared().performChanges({
+            PHAssetChangeRequest.creationRequestForAsset(from: image)
+        }) { success, error in
+            DispatchQueue.main.async {
+                if success {
+                    completion?(nil)
+                } else {
+                    completion?(error)
+                }
+            }
+        }
+    }
+    
+    public func saveImage(url: URL, completion: ((Error?) -> Void)? = nil) {
+        PHPhotoLibrary.shared().performChanges({
+            PHAssetChangeRequest.creationRequestForAssetFromImage(atFileURL: url)
+        }) { success, error in
+            DispatchQueue.main.async {
+                if success {
+                    completion?(nil)
+                } else {
+                    completion?(error)
+                }
+            }
+        }
+    }
+    
+    public func saveVideo(url: URL, completion: ((Error?) -> Void)? = nil) {
+        PHPhotoLibrary.shared().performChanges({
+            PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: url)
+        }) { success, error in
+            DispatchQueue.main.async {
+                if success {
+                    completion?(nil)
+                } else {
+                    completion?(error)
+                }
+            }
+        }
+    }
     
     public func openSettings() {
         if let settingsURL = URL(string: UIApplication.openSettingsURLString) {
