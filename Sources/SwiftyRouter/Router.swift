@@ -191,6 +191,21 @@ extension Router {
 }
 
 
+// MARK: PhotoPicker
+
+import PhotosUI
+extension Router {
+    
+    public func photoPicker(filter: PHPickerFilter = .images, limit: Int = 1, completion: @escaping ([UIImage]) -> Void) {
+        PhotoPickerHelper.pickPhotos(on: viewController, filter: filter, limit: limit, completion)
+    }
+    
+    public func takePhoto(completion: @escaping (UIImage) -> Void) {
+        PhotoPickerHelper.takePhoto(on: viewController, completion: completion)
+    }
+}
+
+
 // MARK: FilePicker
 
 extension Router {
@@ -198,21 +213,18 @@ extension Router {
     ///
     /// - Parameters:
     ///   - types: [UTType]
-    ///   - allowsMultipleSelection: Bool
-    ///   - title: String?
-    ///   - completion: (([URL]) -> Void)?
+    ///   - completion: ([URL]) -> Void
     ///
     /// # Example #
     /// ```swift
     /// if url.startAccessingSecurityScopedResource() {
-    ///     defer { url.stopAccessingSecurityScopedResource() }
-    ///
     ///     do {
     ///         let data = try Data(contentsOf: url)
     ///         // Process data...
     ///     } catch {
     ///         print("Error accessing file: \(error)")
     ///     }
+    ///     url.stopAccessingSecurityScopedResource()
     /// } else {
     ///     print("Failed to start accessing security scoped resource.")
     /// }
@@ -220,8 +232,18 @@ extension Router {
     ///
     /// Always call `stopAccessingSecurityScopedResource` to release the resource when done.
     /// Failing to do so may lead to resource leaks or unexpected behavior.
-    public func filePicker(types: [UTType], allowsMultipleSelection: Bool = false, title: String? = nil, completion: (([URL]) -> Void)?) {
-        FilePickerHelper.pick(types: types, allowsMultipleSelection: allowsMultipleSelection, on: viewController, title: title, completion: completion)
+    public func filePicker(types: [UTType], allowsMultipleSelection: Bool = false, completion: @escaping ([URL]) -> Void) {
+        FilePickerHelper.pick(types: types, allowsMultipleSelection: allowsMultipleSelection, on: viewController, completion: completion)
+    }
+}
+
+
+// MARK: Document Scanner
+
+extension Router {
+
+    public func documentScanner(completion: @escaping ([DocumentScan]) -> Void) {
+        DocumentScannerHelper.scanDocument(on: viewController, completion: completion)
     }
 }
 

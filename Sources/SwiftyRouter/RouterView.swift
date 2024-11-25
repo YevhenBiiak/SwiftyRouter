@@ -21,6 +21,10 @@ public struct RouterView<T: View>: View {
         self.init(navigationBarHidden: true, content: { _ in content()})
     }
     
+    public init(_ content: @escaping (_ router: Router) -> T) {
+        self.init(navigationBarHidden: true, content: content)
+    }
+    
     public init(navigationBarHidden: Bool, @ViewBuilder content: @escaping (_ router: Router) -> T) {
         self.navigationBarHidden = navigationBarHidden
         self.content = content
