@@ -25,8 +25,8 @@ enum DocumentScannerHelper {
 }
 
 public struct DocumentScan {
-    let title: String
-    let image: UIImage
+    public let title: String
+    public let image: UIImage
 }
 
 private class DocumentScannerDelegate: NSObject, VNDocumentCameraViewControllerDelegate {
