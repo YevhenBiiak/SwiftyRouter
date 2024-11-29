@@ -31,7 +31,12 @@ private class ColorPickerViewControllerDelegate: NSObject, UIColorPickerViewCont
     
     func colorPickerViewControllerDidFinish(_ viewController: UIColorPickerViewController) {
         DispatchQueue.main.async { [weak self] in
-            self?.pickingColorHandler?(viewController.selectedColor)
+            // convert to UIExtendedSRGBColorSpace
+            var (r,g,b,a): (CGFloat, CGFloat, CGFloat, CGFloat) = (0, 0, 0, 0)
+            viewController.selectedColor.getRed(&r, green: &g, blue: &b, alpha: &a)
+            let color = UIColor(red: r, green: g, blue: b, alpha: a)
+            // return color
+            self?.pickingColorHandler?(color)
             self?.pickingColorHandler = nil
         }
     }
