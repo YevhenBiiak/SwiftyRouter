@@ -12,7 +12,7 @@ enum ColorPickerHelper {
     
     private static let delegate = ColorPickerViewControllerDelegate()
     
-    static func pick(on viewController: UIViewController?, title: String? = nil, completion: @escaping (UIColor) -> Void) {
+    static func pick(on viewController: UIViewController?, title: String?, supportsAlpha: Bool, completion: @escaping (UIColor) -> Void) {
         delegate.pickingColorHandler = nil
         guard let viewController else { return }
         
@@ -21,6 +21,7 @@ enum ColorPickerHelper {
         if let title {
             controller.title = title
         }
+        controller.supportsAlpha = supportsAlpha
         controller.delegate = delegate
         viewController.present(controller, animated: true)
     }

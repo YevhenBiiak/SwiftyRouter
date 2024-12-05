@@ -14,13 +14,23 @@ enum FilePickerHelper {
     
     private static let delegate = FilePickerDelegate()
     
-    static func pick(types: [UTType], allowsMultipleSelection: Bool, on viewController: UIViewController?, completion: (([URL]) -> Void)?) {
+    static func importFiles(types: [UTType], allowsMultipleSelection: Bool, on viewController: UIViewController?, completion: (([URL]) -> Void)?) {
         delegate.pickingDocumentHandler = nil
         guard let viewController else { return }
         
         delegate.pickingDocumentHandler = completion
         let controller = UIDocumentPickerViewController(forOpeningContentTypes: types)
         controller.allowsMultipleSelection = allowsMultipleSelection
+        controller.delegate = delegate
+        viewController.present(controller, animated: true)
+    }
+    
+    static func exportFiles(urls: [URL], asCopy: Bool, on viewController: UIViewController?, completion: (([URL]) -> Void)?) {
+        delegate.pickingDocumentHandler = nil
+        guard let viewController else { return }
+        
+        delegate.pickingDocumentHandler = completion
+        let controller = UIDocumentPickerViewController(forExporting: urls, asCopy: asCopy)
         controller.delegate = delegate
         viewController.present(controller, animated: true)
     }

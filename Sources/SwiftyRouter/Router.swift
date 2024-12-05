@@ -185,8 +185,8 @@ extension Router {
 
 extension Router {
     
-    public func colorPicker(_ title: String? = nil, completion: @escaping (UIColor) -> Void) {
-        ColorPickerHelper.pick(on: viewController, title: title, completion: completion)
+    public func colorPicker(_ title: String? = nil, supportsAlpha: Bool = true, completion: @escaping (UIColor) -> Void) {
+        ColorPickerHelper.pick(on: viewController, title: title, supportsAlpha: supportsAlpha, completion: completion)
     }
 }
 
@@ -206,15 +206,16 @@ extension Router {
 }
 
 
-// MARK: FilePicker
+// MARK: File Import/Export
 
 extension Router {
-    /// File picker. ⚠️ **Warning**: Do not forget to handle with `startAccessingSecurityScopedResource`.
+    /// File Import.
     ///
     /// - Parameters:
     ///   - types: [UTType]
     ///   - completion: ([URL]) -> Void
     ///
+    ///⚠️ **Warning**: Do not forget to handle with `startAccessingSecurityScopedResource`.
     /// # Example #
     /// ```swift
     /// if url.startAccessingSecurityScopedResource() {
@@ -232,8 +233,34 @@ extension Router {
     ///
     /// Always call `stopAccessingSecurityScopedResource` to release the resource when done.
     /// Failing to do so may lead to resource leaks or unexpected behavior.
-    public func filePicker(types: [UTType], allowsMultipleSelection: Bool = false, completion: @escaping ([URL]) -> Void) {
-        FilePickerHelper.pick(types: types, allowsMultipleSelection: allowsMultipleSelection, on: viewController, completion: completion)
+    public func fileImport(types: [UTType], allowsMultipleSelection: Bool = false, completion: @escaping ([URL]) -> Void) {
+        FilePickerHelper.importFiles(types: types, allowsMultipleSelection: allowsMultipleSelection, on: viewController, completion: completion)
+    }
+    
+    /// File Export
+    ///
+    /// - Parameters:
+    ///   - urls: [URL]
+    ///   - asCopy: Bool
+    ///   - completion: ([URL]) -> Void
+    ///
+    ///⚠️ **Warning**: if you want to access files after export, you need to handle urls with `startAccessingSecurityScopedResource`.
+    /// # Example #
+    /// ```swift
+    /// if url.startAccessingSecurityScopedResource() {
+    ///     do {
+    ///         let data = try Data(contentsOf: url)
+    ///         // Process data...
+    ///     } catch {
+    ///         print("Error accessing file: \(error)")
+    ///     }
+    ///     url.stopAccessingSecurityScopedResource()
+    /// } else {
+    ///     print("Failed to start accessing security scoped resource.")
+    /// }
+    /// ```
+    public func fileExport(urls: [URL], asCopy: Bool = true, completion: @escaping ([URL]) -> Void) {
+        FilePickerHelper.exportFiles(urls: urls, asCopy: asCopy, on: viewController, completion: completion)
     }
 }
 
